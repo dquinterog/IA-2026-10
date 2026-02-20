@@ -51,25 +51,66 @@ def breadthFirstSearch(problem: SearchProblem):
     """
     Search the shallowest nodes in the search tree first.
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    queue = utils.Queue()
+    visited = set()
+    queue.push((problem.getStartState(), []))
+    
+    while not queue.isEmpty():
+        state, actions = queue.pop()
+        if problem.isGoalState(state):
+            return actions
+        
+        if state not in visited:
+            visited.add(state)
+            for successor, action, _ in problem.getSuccessors(state):
+                new_actions = actions + [action]
+                queue.push((successor, new_actions))
+    return []  # Return an empty list if no solution is found
 
 
 def uniformCostSearch(problem: SearchProblem):
     """
     Search the node of least total cost first.
     """
-
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    priority_queue = utils.PriorityQueue()
+    visited = set()
+    priority_queue.push((problem.getStartState(), [], 0), 0)
+    
+    while not priority_queue.isEmpty():
+        state, actions, cost = priority_queue.pop()
+        if problem.isGoalState(state):
+            return actions
+        
+        if state not in visited:
+            visited.add(state)
+            for successor, action, step_cost in problem.getSuccessors(state):
+                new_actions = actions + [action]
+                new_cost = cost + step_cost
+                priority_queue.push((successor, new_actions, new_cost), new_cost)
+    return []  # Return an empty list if no solution is found
 
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """
     Search the node that has the lowest combined cost and heuristic first.
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    priority_queue = utils.PriorityQueue()
+    visited = set()
+    start_state = problem.getStartState()
+    priority_queue.push((start_state, [], 0), heuristic(start_state, problem))
+    
+    while not priority_queue.isEmpty():
+        state, actions, cost = priority_queue.pop()
+        if problem.isGoalState(state):
+            return actions
+        
+        if state not in visited:
+            visited.add(state)
+            for successor, action, step_cost in problem.getSuccessors(state):
+                new_actions = actions + [action]
+                new_cost = cost + step_cost
+                priority_queue.push((successor, new_actions, new_cost), new_cost + heuristic(successor, problem))
+    return []  # Return an empty list if no solution is found
 
 
 # Abbreviations (you can use them for the -f option in main.py)
