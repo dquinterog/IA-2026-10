@@ -28,9 +28,24 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
-
+    stack = utils.Stack()
+    visited = set()
+    stack.push((problem.getStartState(), []))
+    
+    while not stack.isEmpty():
+        state, actions = stack.pop()
+        #prints to prove the states and the actions
+        #print("Current state:", state)
+        #print("Actions to reach current state:", actions)
+        if problem.isGoalState(state):
+            return actions
+        
+        if state not in visited:
+            visited.add(state)
+            for successor, action, _ in problem.getSuccessors(state):
+                new_actions = actions + [action]
+                stack.push((successor, new_actions))
+    return []  # Return an empty list if no solution is found
 
 def breadthFirstSearch(problem: SearchProblem):
     """
