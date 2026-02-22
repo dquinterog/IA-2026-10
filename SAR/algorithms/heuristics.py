@@ -29,10 +29,10 @@ def euclideanHeuristic(state, problem):
 
 def survivorHeuristic(state: Tuple[Tuple, Any], problem: MultiSurvivorProblem):
     """
-    Heuristic for the MultiSurvivorProblem. 
-    h(n) = distancia Manhattan al sobreviviente más cercano
-       + MST de los sobrevivientes restantes (usando Manhattan).
-    
+    Heuristic for the MultiSurvivorProblem.
+
+    h(n) = Manhattan distance to the closest survivor
+        + MST over the remaining survivors (using Manhattan distance).
     """
     position, survivors_grid = state
     survivors = survivors_grid.asList()
@@ -40,19 +40,19 @@ def survivorHeuristic(state: Tuple[Tuple, Any], problem: MultiSurvivorProblem):
     if not survivors:
         return 0
 
-    # Distancia Manhattan al sobreviviente más cercano
+    # Manhattan distance to the closest survivor
     min_to_any = min(abs(position[0]-sx) + abs(position[1]-sy) for (sx, sy) in survivors)
 
-    # Si solo queda uno, esa es la cota inferior total
+    # If only one survivor remains, that distance is the total lower bound
     if len(survivors) == 1:
         return min_to_any
 
-    # --- MST con Prim sobre Manhattan ---
-    # Cacheamos distancias entre sobrevivientes para no recalcular tanto
-    # (Clave del cache: tuple ordenada de survivors)
+    # --- MST using Prim's algorithm with Manhattan distance ---
+    # Cache pairwise distances between survivors to avoid recomputation
+    # (Cache key: sorted tuple of survivor positions)
     key = tuple(sorted(survivors))
     if key not in problem.heuristicInfo:
-        # Precompute pairwise distances
+        # Precompute pairwise Manhattan distances
         pairDist = {}
         for i in range(len(key)):
             for j in range(i+1, len(key)):
@@ -65,26 +65,27 @@ def survivorHeuristic(state: Tuple[Tuple, Any], problem: MultiSurvivorProblem):
 
     pairDist = problem.heuristicInfo[key]
 
-    # Prim
+    # Prim's algorithm
     unvisited = set(survivors)
     start = next(iter(unvisited))
     unvisited.remove(start)
     visited = {start}
 
     mst_cost = 0
-    # Para eficiencia, guardamos el mejor costo de conexión hacia el árbol actual
+
+    # For efficiency, store the best connection cost to the current tree
     best_edge = {u: abs(u[0]-start[0]) + abs(u[1]-start[1]) for u in unvisited}
 
     while unvisited:
-        # escoger el nodo con menor costo de conexión
+        # Select the node with the smallest connection cost
         nxt = min(unvisited, key=lambda u: best_edge[u])
         mst_cost += best_edge[nxt]
         unvisited.remove(nxt)
         visited.add(nxt)
 
-        # actualizar costos de conexión para lo que falta
+        # Update connection costs for remaining nodes
         for u in unvisited:
-            # usamos cache si existe, si no, Manhattan directo
+            # Use cached distance if available, otherwise compute Manhattan directly
             d = pairDist.get((nxt, u), abs(nxt[0]-u[0]) + abs(nxt[1]-u[1]))
             if d < best_edge[u]:
                 best_edge[u] = d
