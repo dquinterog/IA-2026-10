@@ -1,7 +1,9 @@
 ## Integrantes
 
 Daniel Felipe Quintero Gil – 202410693 
+
 Johan Camilo Murcia Valencia – 202317418 
+
 Leonela Moreno Martinez – 202514980 
 
 ##  Guía de Uso
