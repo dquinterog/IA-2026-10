@@ -1,3 +1,9 @@
+## Integrantes
+
+Daniel Felipe Quintero Gil – 202410693 
+Johan Camilo Murcia Valencia – 202317418 
+Leonela Moreno Martinez – 202514980 
+
 ##  Guía de Uso
 
 La ejecución se realiza a través del script principal `main.py` utilizando diversos flags para configurar el problema y el algoritmo.
